@@ -1,0 +1,59 @@
+<form (ngSubmit)="submit()">
+    <div *ngIf="userProfilService.userProfil | async as profil">
+        <h5 class="mb-0 mt-5">Paramètres utilisateur</h5>
+        <p>Contrôle des paramètres utilisateurs et de notifications</p>
+        <p>Prénom: {{profil.prenom}}</p>
+        <p>Nom: {{profil.nom}}</p>
+        <p class="text-danger">Type de compte: {{profil.type}}</p>
+        <hr class="my-4" />
+        <strong class="mb-0">Notification</strong>
+        <p>Contrôle des différentes notifications à recevoir</p>
+        <div class="list-group mb-5 shadow">
+            <div class="list-group-item" *ngIf="(auth.isAdmin | async)">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <strong class="mb-0">Je souhaite être averti par mail lors de la modification des exclusions</strong>
+                
+                    </div>
+                    <div class="col-auto">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="customSwitches" name="alertMail" [(ngModel)]="this.alertMail" >
+                            <label class="custom-control-label" for="customSwitches"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group-item">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <strong class="mb-0">Choix des seuils de Mises à jour avant alerte</strong>
+                        <p class="text-muted mb-0">Séléctionner les seuils de Mises à jour  avant que le serveur soit considéré comme en alerte ou comme bon</p>
+                    </div>
+                    <div class="col-auto">
+                        <div class="custom-control md-form form-sm">  
+                            <input value="{{profil.serveursAlerte}}" name="serveursAlerte" id="id_serveurAlerte" type="number" class="form-control" [(ngModel)]="this.seuilAlerte">
+                        </div>
+                        <div class="custom-control">
+                            <input value="{{profil.serveursBon}}" name="serveursBon" type="number" class="form-control" [(ngModel)]="this.seuilBon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="my-4" />
+        <strong class="mb-0">Mes Actions</strong>
+        <p>petit déscriptif des dernières actions réalisées</p>
+        <div class="list-group mb-5 shadow">
+            <div class="list-group-item"  *ngFor="let action of this.profil_user.actions.slice(0,30);">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <strong class="mb-0">{{action.split('::ffff:')[0]+action.split('::ffff:')[1]}}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="button btn btn-success">Enregistrer les modifications</button>
+        <p *ngIf="this.responseConfig.getValue()=='modification faite'" class="text-success">{{this.responseConfig.getValue()}}</p>
+        <p *ngIf="this.responseConfig.getValue()!='modification faite'" class="text-danger">{{this.responseConfig.getValue()}}</p>
+    </div>
+</form>

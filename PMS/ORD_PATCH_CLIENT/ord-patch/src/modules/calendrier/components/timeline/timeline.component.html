@@ -1,0 +1,30 @@
+
+<div class="container main">
+  <div class="page-header">
+      <h1 id="timeline">Timeline</h1>
+  </div>
+  <ul class="timeline">
+      <li *ngFor="let item of items" ngClass="{{item.sens}}">
+        
+        
+        <div class="timeline-badge" [ngStyle]="{'background-color':item.color}" ><fa-icon [icon]='[item.iconePre,item.iconeName]'></fa-icon></div>
+        <div class="timeline-panel">
+          <div class="timeline-heading">
+            <h4 class="timeline-title">{{item.nom}}</h4>
+            <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i>{{item.smallText}}</small></p>
+          </div>
+          <div class="timeline-body">
+           <ul>
+            <li *ngFor="let proc of item.processus" class="proc">
+              <p>{{proc.content}}</p>
+              <p>{{proc.script}} à {{proc.heure}}</p>
+              <p class="script">{{proc.duree}}</p>
+            </li>
+           </ul>
+          </div>
+        </div>
+        
+      </li>
+      
+  </ul>
+</div>

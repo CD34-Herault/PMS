@@ -1,0 +1,179 @@
+
+<!-- Pop Filter -->
+<ng-template #popContent>
+  <ul style="list-style-type: none;">
+    <li *ngFor="let pop of this.waafService.listPop"><input class="check" type="checkbox" name="list_pop"  [ngModel]="pop.selected" (change)="changePop(pop.val)" id="{{this.waafService.listPop.indexOf(pop)}}" value="{{pop.val}}">{{' '+pop.val}}</li>
+  </ul>
+</ng-template>
+
+<ng-template #popTitle>Filtre de <b>{{popTitre}}</b></ng-template>
+
+<!-- MODAL -->
+<ng-template #modalWorkflow let-close="close" >
+    <div class="modal-header">
+      <h5 class="modal-title">Workflow</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" style="background-color: aliceblue;">
+      <p><strong>Statut Maintenance:</strong></p>
+      <div  *ngIf="!enMaintenance">
+        <p style="color: green;">Pas de maintenance</p>
+        <div *ngIf="authentificationService.isAdmin | async">
+          <button class="btn btn-sm btn-outline-danger" [disabled]="waafService.searchInProgress$| async" (click)="maintenance(this.modalWorkflowData.tunnel?.uid,this.modalWorkflowData.tunnel?.network?.incoming?.serverName);">Mettre en maintenance</button>
+        </div>
+      </div>
+      <div  *ngIf="enMaintenance">
+        <p style="color: red;">En maintenance</p>
+        <div *ngIf="authentificationService.isAdmin | async">
+          <button class="btn btn-sm btn-outline-success"  [disabled]="waafService.searchInProgress$| async" (click)="leverMaintenance(this.modalWorkflowData.tunnel?.uid,this.modalWorkflowData.tunnel?.network?.incoming?.serverName);">Lever la maintenance</button>
+        </div>
+      </div>
+      
+      <p><strong>Workflow Parameters</strong></p>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let parameter of this.modalWorkflowData.tunnel?.workflowParameters; index as i">
+          <td>
+            {{ parameter.name }}
+          </td>
+          <td>{{ parameter.value }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+</ng-template>
+
+<!-- MODAL -->
+<ng-template #modalAuth let-close="close" >
+  <div class="modal-header" style="background-color: #0f054c;color: #fff;">
+    <h5 class="modal-title">Indiquez vos identifiants UBIKA</h5>
+    <button style="color: #fff;" type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" role="form">
+      <div class="input-group mb-3">
+        <label for="username" class="col-sm-3">Username:</label>
+        <div class="col-sm-6">
+          <input class="form-control ml-1" type="text" name="username" id="username" value="adm_xxx..">
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+      <div class="input-group mb-3">
+        <label for="password" class="col-sm-3">Password:</label>
+        <div class="col-sm-6">
+          <input class="form-control ml-1" type="text" name="password" id="password">
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-info">Login</button>
+  </div>
+</ng-template>
+
+<!-- MODAL -->
+<ng-template #modalMultipleMaintenance let-close="close" >
+  <div class="modal-header">
+    <h5 class="modal-title"><fa-icon class="mr-2" [icon]='["fas", "triangle-exclamation"]'></fa-icon>Maintenance multiple</h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Attention vous allez mettre en maintenance les sites ci-dessous:</strong></p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" *ngFor="let tunnel of checkedList" >{{tunnel.network.incoming.serverName}}</li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-danger" [disabled]="waafService.searchInProgress$| async" (click)="maintenanceMultiple(this.checkedList);">Mettre en maintenance</button>
+    <button class="btn btn-sm btn-outline-success" [disabled]="waafService.searchInProgress$| async" (click)="leverMaintenanceMultiple(this.checkedList);">Lever les maintenances</button>
+  </div>
+</ng-template>
+
+<form>
+  <div>
+      <div class="form-group form-inline">
+        Recherche: 
+        <input class="form-control ml-1" type="text" name="searchTerm" [(ngModel)]="waafService.searchTerm" />
+        <div class="ml-4 btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+          <button type="button" class="btn btn-outline-alco" (click)="waafService.heberge$ = false">Alco/PV</button>
+          <button type="button" class="btn btn-outline-orange" (click)="waafService.heberge$ = true">Orange</button>
+        </div>
+        <span class="ml-3" *ngIf="waafService.total$| async">Total: {{waafService.total$ | async}}</span>
+        <button type="button" class="ml-3 btn btn-success" (click)="exportexcel()"><fa-icon class="mr-1" [icon]='["fas", "file-export"]'></fa-icon>Export Excel</button>
+        <div class="ml-4" *ngIf="checkedList.length >0"><button type="button" class="btn btn-primary" *ngIf="authentificationService.isAdmin" (click)="open(modalMultipleMaintenance,undefined)">Mettre/Lever en maintenance</button></div>
+      </div>
+  </div> 
+  <div class="progress ml-1"  *ngIf="waafService.loading$ | async">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+          Chargement ...
+      </div>
+  </div> 
+
+  <div class="table-responsive">
+      <table class="table"  id="excel-table" *ngIf="tunnels$ | async as tunnels" >
+          <thead class="thead-light">
+                <tr>
+                  <!-- <th>#</th> -->
+                  <th scope="col" *ngIf="authentificationService.isAdmin | async as adm"><span *ngIf="adm == true"><input type="checkbox" id="inlineCheckbox-master" name="master" value="option1"  [(ngModel)]="masterSelected" (change)="checkUncheckAll()"></span></th>
+                  <th scope="col" sbSortable="name" (sort)="onSort($event)"><span>Nom</span><sb-sort-icon *ngIf='sortedColumn === "name"' [direction]="sortedDirection"></sb-sort-icon></th>
+                  <th scope="col"><span>Appliance</span><fa-icon class="ml-1" [icon]='["fas", "filter"]' placement="bottom" [ngbPopover]="popContent" [popoverTitle]="popTitle" (click)="filterPopAppliance(tunnels);this.popTitre='Appliance';" ></fa-icon></th>
+                  <th scope="col"><span>Alias</span></th>
+                  <th scope="col"><span>Url</span></th>
+                  <th scope="col"><span>Certificat</span></th>
+                  <th scope="col"><span>Port</span><fa-icon class="ml-1" [icon]='["fas", "filter"]'  placement="bottom" [ngbPopover]="popContent" [popoverTitle]="popTitle" (click)="filterPopPort(tunnels);this.popTitre='Port';" ></fa-icon></th>
+                  <!-- <th scope="col"><span>Uid</span></th> -->
+                  <th scope="col"><span>Workflow</span></th>
+                  <th scope="col"><span>Cipher Profile (incoming)</span><fa-icon class="ml-1" [icon]='["fas", "filter"]'  placement="bottom" [ngbPopover]="popContent" [popoverTitle]="popTitle" (click)="filterPopCipherProfile(tunnels);this.popTitre='Cipher Profile';" ></fa-icon></th>  
+                  <th scope="col" style="display: none;"><span>Cipher Profile (outgoing)</span><fa-icon class="ml-1" [icon]='["fas", "filter"]'  placement="bottom" [ngbPopover]="popContent" [popoverTitle]="popTitle" (click)="filterPopCipherProfile(tunnels);this.popTitre='Cipher Profile';" ></fa-icon></th>  
+
+                  <th scope="col"><span>IP Backend</span></th> 
+                  <th scope="col"><span>Port Backend</span><fa-icon class="ml-1" [icon]='["fas", "filter"]'  placement="bottom" [ngbPopover]="popContent" [popoverTitle]="popTitle" (click)="filterPopPortBackend(tunnels);this.popTitre='Port Backend';" ></fa-icon></th>              
+                  <th scope="col"><span>Actif</span><fa-icon class="ml-1" [icon]='["fas", "filter"]'  placement="bottom" [ngbPopover]="popContent" [popoverTitle]="popTitle" (click)="filterPopActif(tunnels);this.popTitre='Actif';"></fa-icon></th>              
+                  <th></th>
+                </tr>
+          </thead>
+          <tbody>
+              <tr [ngClass]="{'inactif': !tunnel.tunnel.enabled}" *ngFor="let tunnel of checklist">
+                  <!-- <td><ngb-highlight Style="font-weight: bold" [result]="(tunnels.indexOf(tunnel)+1).toString()"></ngb-highlight></td> -->
+                  <th scope="row" *ngIf="authentificationService.isAdmin | async as adm"><input  *ngIf="adm == true && tunnel.tunnel.enabled" class="check" type="checkbox" name="list_name" [(ngModel)]="tunnel.isSelected"  (change)="isAllSelected()" id="{{tunnel.tunnel.id}}" value="{{tunnel.tunnel.fullName}}"></th>
+                  <td class="ml-2"><ngb-highlight [result]="tunnel.tunnel.name.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.appliance.name.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.incoming.serverAlias.toString().replaceAll(',','\n').toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.incoming.serverName.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.incoming.ssl.certificate?.name.split('Certificat')[1]?.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.incoming.port.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <!-- <td><ngb-highlight [result]="tunnel.uid" [term]="waafService.searchTerm"></ngb-highlight></td> -->
+                  <td><button [disabled]="!tunnel.tunnel.enabled" class="btn btn-sm btn-outline-primary" (click)="open(modalWorkflow,tunnel.tunnel)">{{tunnel.tunnel.workflow.name}}</button></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.incoming.ssl.profile?.name.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td style="display: none;"><ngb-highlight [result]="tunnel.tunnel.network.outgoing.ssl.profile?.name.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.outgoing.address.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.network.outgoing.port.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><ngb-highlight [result]="tunnel.tunnel.enabled.toString()" [term]="waafService.searchTerm"></ngb-highlight></td>
+                  <td><p *ngIf="checkMaintenance(tunnel.tunnel)" style="color: red;"><fa-icon class="mr-1" [icon]='["fas", "ban"]'></fa-icon>En Maintenance</p><p *ngIf="!checkMaintenance(tunnel.tunnel)" style="color: green;"><fa-icon class="mr-1" [icon]='["fas", "check"]'></fa-icon></p></td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+  
+  <div class="d-flex justify-content-between p-2">
+      <ngb-pagination [collectionSize]="(total$ | async) || 0" [(page)]="waafService.page" [maxSize]="10" [pageSize]="waafService.pageSize"></ngb-pagination
+      ><select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="waafService.pageSize">
+          <option [ngValue]="20">20 objets par page</option>
+          <option [ngValue]="50">50 objets par page</option>
+          <option [ngValue]="-1">Tous</option>
+      </select>
+  </div>
+</form>

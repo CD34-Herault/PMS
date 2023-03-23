@@ -1,0 +1,370 @@
+<ng-template
+  #weekViewHourSegmentTemplate
+  let-segment="segment"
+  let-locale="fr"
+  let-segmentHeight="segmentHeight"
+  let-isTimeLabel="isTimeLabel"
+>
+  <div
+    #segmentElement
+    class="cal-hour-segment"
+    [style.height.px]="segmentHeight"
+    [class.cal-hour-start]="segment.isStart"
+    [class.cal-after-hour-start]="!segment.isStart"
+    [ngClass]="segment.cssClass"
+    (mousedown)="startDragToCreate(segment, $event, segmentElement)"
+  >
+    <div class="cal-time" *ngIf="isTimeLabel">
+      {{ segment.date | calendarDate:'weekViewHour':locale }}
+    </div>
+  </div>
+</ng-template>
+
+<div class="row text-center">
+    <div class="col-md-3">
+      <div class="btn-group">
+        <div
+          class="btn btn-primary"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Précédent
+        </div>
+        <div
+          class="btn btn-outline-secondary"
+          mwlCalendarToday
+          [(viewDate)]="viewDate"
+        >
+          Aujourd'hui
+        </div>
+        <div
+          class="btn btn-primary"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Suivant
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'fr' }}</h3>
+    </div>
+    <div class="col-md-3">
+      <div class="btn-group">
+
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Month)"
+          [class.active]="view === CalendarView.Month"
+        >
+          Mois
+        </div>
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Week)"
+          [class.active]="view === CalendarView.Week"
+        >
+          Semaine
+        </div>
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Day)"
+          [class.active]="view === CalendarView.Day"
+        >
+          Jour
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div
+        class="card"
+        mwlDroppable
+        (drop)="externalDrop($event.dropData.event)"
+        dragOverClass="drag-over"
+      >
+        <div class="card-body">
+          <p *ngIf="externalEvents.length === 0"><em>No events added</em></p>
+          <ul>
+            <li
+              *ngFor="let calendrier of calendriers.getValue()"
+              mwlDraggable
+              [dropData]="{event: calendrier}"
+              [touchStartLongPress]="{ delay: 300, delta: 30 }"
+              dragActiveClass="drag-active"
+            >
+              <a href="javascript:;" [style.color]="calendrier.couleurs.primaire">
+                {{ calendrier.full_name }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+
+  <div [ngSwitch]="view" >
+
+    <mwl-calendar-month-view
+      *ngSwitchCase="CalendarView.Month"
+      [locale]="'fr'"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [activeDayIsOpen]="activeDayIsOpen"
+      (beforeViewRender)="beforeMonthViewRender($event)"
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view
+      *ngSwitchCase="CalendarView.Week"
+      [locale]="'fr'"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [hourSegmentTemplate]="weekViewHourSegmentTemplate"
+      [weekStartsOn]="weekStartsOn"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view
+      *ngSwitchCase="CalendarView.Day"
+      [locale]="'fr'"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+
+      [hourSegmentTemplate]="weekViewHourSegmentTemplate"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-day-view>
+  </div>
+  
+  <!-- Partie configuration des calendriers -->
+  
+  <br /><br /><br />
+  
+  <h3>
+    Modifier les calendriers
+    <button class="btn btn-primary float-right" *ngIf="(auth.isAdmin | async)" (click)="open(modalCreate)">
+      Ajouter
+    </button>
+    <div class="clearfix"></div>
+  </h3>
+  
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Couleur Primaire</th>
+          <th>Couleur Secondaire</th>
+          <th>Actif</th>
+          <th>Supprimer</th>
+        </tr>
+      </thead>
+  
+      <tbody *ngIf="this.calendriers | async as calendriers">
+        <tr  *ngFor="let calendrier of calendriers" >
+          <td>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="calendrier.name"
+              [disabled]="!(auth.isAdmin | async)"
+              (keyup)="refresh.next()"
+            />
+          </td>
+          <td>
+            <input
+              type="color"
+              [disabled]="!(auth.isAdmin | async)"
+              [(ngModel)]="calendrier.couleurs.primaire"
+              (change)="changeColor(calendrier._id!,calendrier.couleurs); refresh.next();"
+            />
+          </td>
+          <td>
+            <input
+              type="color"
+              [disabled]="!(auth.isAdmin | async)"
+              [(ngModel)]="calendrier.couleurs.secondaire"
+              (change)="changeColor(calendrier._id!,calendrier.couleurs); refresh.next()"
+            />
+          </td>
+          <td>
+            <input type="checkbox"
+            [(ngModel)]="calendrier.actif"
+            (change)="onChange(calendrier._id!)"/>
+          
+          </td>
+          <td>
+            <button class="btn btn-danger" [disabled]="!(auth.isAdmin | async)" (click)="openDelete(modalDelete,calendrier._id!);">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <ng-template #modalContent let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Action detecté</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Action:
+        <pre>{{ modalData?.action }}</pre>
+      </div>
+      <div>
+        Evènement:
+        <pre>{{ modalData?.event | json }}</pre>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="close()">
+        OK
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #modalCreate let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Création d'un calendrier</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Entrez le nom du nouveau calendrier:</label>
+          <input type="text" class="form-control" name="inputName" id="recipient-name" [(ngModel)]="nameNewCalendar"/>
+        </div>
+        <div class="form-group">
+          <label for="recipient-fullname"  class="col-form-label">Entrez le nom complet:</label>
+          <input type="text" class="form-control" name="inputFullName" id="recipient-fullname" [(ngModel)]="fullNameNewCalendar"/>
+        </div>
+        <div class="form-group">
+          <label>couleur primaire:</label>
+          <input
+          type="color"
+          name="inputColorPrimaire"
+          class="form-control form-control-color"
+          [(ngModel)]="couleurPrimaireNewCalendar"
+          (change)="refresh.next()"
+          />
+        </div>
+        <div class="form-group">
+          <label>couleur secondaire:</label>
+          <input
+          type="color"
+          name="inputSecondairePrimaire"
+          class="form-control form-control-color"
+          [(ngModel)]="couleurSecondaireNewCalendar"
+          (change)="refresh.next()"
+          />
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="createCalendar();close()">
+        Créer
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #modalDate let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Ajout d'un créneau</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Selectionnez le calendrier où enregister le créneau:
+        <select class="browser-default custom-select" name="select_env" *ngIf="this.calendriers | async as calendriers" [(ngModel)]="this.selectedCalendar" >
+          <option value="{{calendrier._id}}" *ngFor="let calendrier of calendriers">{{calendrier.name}}</option>
+        </select>
+      </div>
+     
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="addDate();close();">
+        Créer
+      </button>
+    </div>
+  </ng-template>
+  
+  <ng-template #modalDelete let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title">Supression Calendrier</h4>
+      <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Êtes-vous sûr de vouloir supprimer le calendrier ?</strong></p>
+      <p>Tout les évèenements associées au calendrier seront perdues.
+      <span class="text-danger">Attention cette opération ne peut pas être annulé.</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Ok click');deleteCalendar(this.idDeleted)">Supprimer</button>
+    </div>
+  </ng-template>
+  
+  <ng-template #modalTimeline let-close="close" class="ml-2" >
+    <div class="modal-header">
+      <h5 class="modal-title">Timeline</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" style="background-color: aliceblue;">
+      <app-timeline [calendrier]="this.modalTimelineData.cal" [daySelected]="this.modalTimelineData.event"></app-timeline>
+    </div>
+  </ng-template>
+
+  <ng-template #modalExceptionnel let-close="close" >
+    <div class="modal-header">
+      <h5 class="modal-title">Planification Exceptionnel du {{this.modalExceptionnelData.plannif.date_plannif}}</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" style="background-color: aliceblue;">
+      <p><strong>Planifié par {{this.modalExceptionnelData.plannif.user}} de {{this.modalExceptionnelData.plannif.horaire_debut}} à {{this.modalExceptionnelData.plannif.horaire_fin}}</strong></p>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nom</th>
+          <th scope="col">Type</th>
+          <th scope="col">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let serv of this.modalExceptionnelData.plannif.plannifs; index as i">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>
+            {{ serv.name }}
+          </td>
+          <td>{{ serv.type }}</td>
+          <td>{{ serv.description }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-template>

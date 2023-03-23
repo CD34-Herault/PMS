@@ -1,0 +1,4 @@
+<sb-dashboard-head *ngIf="this.title | async as titre" title={{titre}} [hideBreadcrumbs]="false"></sb-dashboard-head>
+<sb-dashboard-cards></sb-dashboard-cards>
+<sb-dashboard-tables [site]="osSelect"></sb-dashboard-tables>
+<sb-dashboard-charts [site]="osSelect"></sb-dashboard-charts>

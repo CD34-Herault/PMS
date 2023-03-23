@@ -1,0 +1,31 @@
+<form (ngSubmit)="submit()">
+    <div *ngIf="userProfilService.userProfil | async as profil">
+        <h5 class="mb-0 mt-5">Paramètres Interface</h5>
+        <p>Contrôle des paramètres de l'interface</p>
+
+        <hr class="my-4" />
+        <strong class="mb-0">Paramétrage Graphique</strong>
+        <p>Contrôle des différentes paramètres graphique</p>
+        <div class="list-group mb-5 shadow">
+            <div class="list-group-item">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <strong class="mb-0">Choix du thème de l'interface</strong>
+                    </div>
+                    <div class="col-auto">
+                        <div class="custom-control">
+                            <select class="browser-default custom-select" name="select-theme" [(ngModel)]="this.theme" >
+                                <option value="Dark">Sombre</option>
+                                <option value="Light">Clair</option>
+                                <option value="blanc-bleu">Clair/bleu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="button btn btn-success">Enregistrer les modifications</button>
+        <p *ngIf="this.responseConfig.getValue()=='modification faite'" class="text-success">{{this.responseConfig.getValue()}}</p>
+        <p *ngIf="this.responseConfig.getValue()!='modification faite'" class="text-danger">{{this.responseConfig.getValue()}}</p>
+    </div>
+</form>

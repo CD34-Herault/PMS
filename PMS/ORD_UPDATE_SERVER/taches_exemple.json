@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "61f3f7e108719250b5c43991"
+  },
+  "icone": "",
+  "nom": "Supression de poste",
+  "description": "supprimer un poste de l'active directory",
+  "categories": [
+    "Micro"
+  ]
+},{
+  "_id": {
+    "$oid": "61f3f86008719250b5c43992"
+  },
+  "icone": "",
+  "nom": "Update groupe",
+  "description": "Ajouter un groupe à un utilisateur",
+  "categories": [
+    "Micro"
+  ]
+},{
+  "_id": {
+    "$oid": "61f3f8ac08719250b5c43993"
+  },
+  "icone": "",
+  "nom": "Quota Z:",
+  "description": "Augmenter le quota du lecteur Z: d'un agent",
+  "categories": [
+    "Micro"
+  ]
+},{
+  "_id": {
+    "$oid": "61f3f8f808719250b5c43994"
+  },
+  "icone": "",
+  "nom": "Message d'abscence",
+  "description": "Mettre ou ajouter un message d'absence sur la BAL d'un agent",
+  "categories": [
+    "Bureautique"
+  ]
+},{
+  "_id": {
+    "$oid": "61f3f95308719250b5c43995"
+  },
+  "icone": "",
+  "nom": "Quota d'une BAL",
+  "description": "Voir le taux de remplissage de la BAL d'un agent",
+  "categories": [
+    "Bureautique",
+    "Micro"
+  ]
+}]

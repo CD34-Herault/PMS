@@ -1,0 +1,9 @@
+<sb-dashboard-head title="Exclusions" [hideBreadcrumbs]="false"></sb-dashboard-head>
+<sb-card *ngIf="urlKey | async as url">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>Serveurs Exclus</div>
+    </div>
+    <div class="card-body">
+        <app-exclusions-tab [urlKey]="url"></app-exclusions-tab>
+    </div>
+</sb-card>

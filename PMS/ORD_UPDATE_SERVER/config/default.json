@@ -1,0 +1,61 @@
+{
+  "HttpConfig": {
+    "bodyparser": {
+      "limit": "10mb",
+      "parameterLimit": 50000
+    }
+  },
+  "Session": {
+    "cookie": {
+      "maxAge": 2592000000 
+    },
+    "store": {
+      "mongoUrl": "mongodb://localhost:27017/session_web"
+    }
+  },
+  "Ftp": {
+    "url": "ftp://172.17.2.130:21",
+    "pathFtp": "C:\\Exploitation\\FTP"
+  },
+  "Mongodb": {
+    "url": "mongodb://localhost:27017"
+  },
+  "ActiveDirectory": {
+    "config": { 
+      "url": "ldap://s207.dept34.intranet",
+      "baseDN": "dc=dept34,dc=intranet"
+    },
+    "GroupSecurity": {
+      "admin": "DEPT34\\GG A Admin PatchManagement",
+      "lecture": "DEPT34\\GG A Lecture PatchManagement",
+      "college": "DEPT34\\GG A College PatchManagement"
+    }
+  },
+  "Nodemailer": {
+    "config": {
+      "host": "smtp.dept34.intranet",
+      "port": 25
+    },
+    "from": "patchManagement@herault.fr"
+  },
+  "ToolBox":{
+    "pathscript": "E:\\PMS\\scripts_toolBox\\"
+  },
+  "ConfServ": {
+    "horaireDefaultMaj": "07:00",
+    "horaireDefaultMajMic": "06:00",
+    "joursLogs": 183,
+    "pathSave": "E:\\save-serveurs\\",
+    "pathScript": "E:\\PMS\\script_patch\\",
+    "pathScriptLinux": "C:\\Exploitation\\PM\\Rapport\\",
+    "filePath": "C:\\Exploitation\\Scripts\\",
+    "filePathProd": "C:\\Exploitation\\PM\\Prod\\",
+    "filePathRec": "C:\\Exploitation\\PM\\Rec\\",
+    "filePathExc": "C:\\Exploitation\\PM\\Exceptionnel\\"
+  },
+  "Waf": {
+    "urlApi": "https://adm_WafAPI:2*zdT2L9d$D+k@Y2@172.17.2.120:3001/",
+    "hebergeApi": "https://adm_WafAPI:2*zdT2L9d$D+k@Y2@10.64.69.2:3001/"
+  }
+  
+}

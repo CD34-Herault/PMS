@@ -1,0 +1,193 @@
+
+<!-- MODAL -->
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Supression Planification</h4>
+    <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Êtes-vous sûr de vouloir supprimer la planification de <span class="text-primary">"{{this.userModal}}"</span> ?</strong></p>
+    <p>Toutes les informations associées à la plannification seront perdues.
+    <span class="text-danger">Attention cette opération ne peut pas être annulé.</span>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click');supressionPlannif(this.idModal)">Supprimer</button>
+  </div>
+</ng-template>
+
+<ng-template #content_addPlannif let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Ajout d'une planification</h4>
+    <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Selection de la date: </strong></p>
+    <div class="input-group mb-3">
+      <input id="datePlannif" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker" [(ngModel)]="this.date_plannif">
+      <button class="btn btn-outline-secondary" (click)="dp.toggle()" type="button"><fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon></button>
+    </div>
+    <label for="dateOfBirth">Horaire Debut/fin</label>
+    <div class="input-group">
+      <input type="time" id="appt" name="horaireMaj" class="form-control" [(ngModel)]="this.horaire_debut" value="{{horaire_debut}}" >
+      <input type="time" id="appt" name="horaireMaj2" class="form-control" [(ngModel)]="this.horaire_fin" value="{{horaire_fin}}" >
+    </div>
+    <hr>
+    <p><strong>Selection des serveurs: </strong></p>
+    <ngx-treeview [config]="config" [items]="items_fullServeur" (filterChange)="onFilterChange($event)"
+                      (selectedChange)="values = $event">
+    </ngx-treeview>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+    <button type="button" class="btn btn-success" (click)="modal.close('Ok click');creationPlannification();">Créer</button>
+  </div>
+</ng-template>
+
+
+<sb-card
+><div class="card-header d-flex justify-content-between align-items-center">
+    <div>planifications Futures</div>
+      
+</div>
+<div class="card-body">
+    <div *ngIf="this.mesPlannifs_futur.getValue().length > 0">
+      <button  *ngIf="auth.isAdmin | async" (click)="open(content_addPlannif);getTreeItemsFullServeur(false,null);" class="btn btn-sm btn-outline-primary mr-3">Ajouter une planification</button>
+    </div>
+    <br>
+    <ngb-accordion #acc="ngbAccordion" [closeOthers]="true" activeIds="1" *ngIf="this.mesPlannifs_futur | async as plannifs">
+        
+        <ngb-panel *ngFor="let plannif of plannifs; index as i">
+            <ng-template ngbPanelHeader>
+                <div class="accordion-button custom-header form-inline">
+                    <strong class="m-0">{{plannif.date_plannif}} de {{plannif.horaire_debut}} à {{plannif.horaire_fin}}</strong>
+                    <div class ="ml-auto">
+                        <button ngbPanelToggle  (click)="this.planel = 'detail'" class="btn btn-sm btn-outline-primary mr-3">Détail</button>
+                      
+                        <button ngbPanelToggle *ngIf="auth.isAdmin | async" (click)="this.planel='modify';getTreeItemsFullServeur(true,plannif);setDatePlannif(plannif)" class="btn btn-sm btn-outline-warning mr-3">Modifier</button>
+                        <button  *ngIf="auth.isAdmin | async" class="btn btn-sm btn-outline-danger mr-3" (click)="open(content); this.userModal = plannif.user; this.idModal = plannif._id">Annuler</button>
+                        
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template ngbPanelContent="first" #test *ngIf="this.planel == 'detail'">
+                <span class="text-primary">Planifié par {{plannif.user}} de {{plannif.horaire_debut}} à {{plannif.horaire_fin}}</span>
+                <table class="table table-striped" >
+                    <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let serv of plannif.plannifs; index as i">
+                      <th scope="row">{{ i + 1 }}</th>
+                      <td>
+                        {{ serv.name }}
+                      </td>
+                      <td>{{ serv.type }}</td>
+                      <td>{{ serv.description }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+      
+            </ng-template>
+
+            <ng-template ngbPanelContent="first" #test *ngIf="this.planel == 'modify'">
+                <div class="form-group ">
+                    <div class="input-group mb-3">
+                      <input id="datePlannif" class="form-control" placeholder="yyyy-mm-dd" name="dp_modify" ngbDatepicker #dp="ngbDatepicker" [(ngModel)]="this.date_plannif">
+                      <button class="btn btn-outline-secondary" (click)="dp.toggle()" type="button"><fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon></button>
+                    </div>
+                    <label for="dateOfBirth">Horaire Debut/fin</label>
+                    <div class="input-group">
+                      <input type="time" id="appt" name="horaireMaj" class="form-control" [(ngModel)]="this.horaire_debut" value="{{horaire_debut}}" >
+                      <input type="time" id="appt" name="horaireMaj2" class="form-control" [(ngModel)]="this.horaire_fin" value="{{horaire_fin}}" >
+                    </div>
+                    <hr>
+                    <label>
+                      <strong>Liste serveurs planifiés par: {{plannif.user}}</strong>
+                    </label>
+                    <ngx-treeview [config]="config" [items]="items_fullServeur" (filterChange)="onFilterChange($event)"
+                      (selectedChange)="values = $event">
+                    </ngx-treeview>
+                    <button type="button" class="btn btn-warning" (click)="modificationPlannification(plannif._id)">Modifier</button>
+                  </div>
+            </ng-template>
+        </ngb-panel>
+    
+    </ngb-accordion>
+
+    <div *ngIf="this.mesPlannifs_futur.getValue().length ==0">
+      <strong class="mr-3">Pas de planifications</strong>
+      <button  *ngIf="auth.isAdmin | async" (click)="open(content_addPlannif);getTreeItemsFullServeur(false,null);" class="btn btn-sm btn-outline-primary mr-3">Ajouter une planification</button>
+    </div>
+    
+   
+</div></sb-card
+>
+
+<sb-card
+><div class="card-header d-flex justify-content-between align-items-center">
+    <div>planifications passées</div>
+      
+</div>
+<div class="card-body">
+    <ngb-accordion #acc="ngbAccordion" *ngIf="this.mesPlannifs_old | async as plannifs">
+        <ngb-panel *ngFor="let plannif of plannifs; index as i">
+            <ng-template ngbPanelHeader>
+                <div class="accordion-button custom-header justify-content-between  form-inline" >
+                    <p class="m-0">{{plannif.date_plannif}} de {{plannif.horaire_debut}} à {{plannif.horaire_fin}}</p>
+    
+                    <button ngbPanelToggle class="btn btn-sm btn-outline-primary ms-2">Détail</button>
+                    
+                </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+                {{plannif.user}}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let serv of plannif.plannifs; index as i">
+                      <th scope="row">{{ i + 1 }}</th>
+                      <td>
+                        {{ serv.name }}
+                      </td>
+                      <td>{{ serv.type }}</td>
+                      <td>{{ serv.description }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+            </ng-template>
+        </ngb-panel>
+    
+    </ngb-accordion>
+</div></sb-card
+>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

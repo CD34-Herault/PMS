@@ -1,0 +1,9 @@
+.button_perso:focus{
+  color: #fff;
+  background-color: #17a2b8;
+  box-shadow: none;
+}
+.button_perso{
+  border: 0.5px solid #17a2b8 !important;
+}
+

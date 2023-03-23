@@ -1,0 +1,2 @@
+2023-03-23 09:27:25 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\Users\wsus_automate\AppData\Roaming\npm\node_modules\qckwinsvc\node_modules\node-windows\lib\wrapper.js --file E:\PMS\PMS\ORD_UPDATE_SERVER\serveur.js --log "servicePatch wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-03-23 09:27:25 - Started 3276

@@ -1,0 +1,6 @@
+{
+    "/wafapi": {
+      "target": "https://172.17.2.120:3001/",
+      "secure": true
+    }
+}

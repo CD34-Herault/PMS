@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkord_patch=self.webpackChunkord_patch||[]).push([[592],{4890:(s,_,e)=>{e.d(_,{u:()=>c,n:()=>n.n});var n=e(984);const c=[n.n]}}]);

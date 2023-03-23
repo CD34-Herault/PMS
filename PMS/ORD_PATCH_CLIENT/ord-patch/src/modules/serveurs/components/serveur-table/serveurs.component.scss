@@ -1,0 +1,68 @@
+@import 'styles/variables.scss';
+
+thead > tr > th {
+    cursor: pointer;
+}
+
+tr {
+    line-height: auto;
+    min-height: 8px;
+ }
+
+
+button:focus{
+    color: #fff;
+    background-color: #17a2b8;
+    box-shadow: none;
+}
+button{
+    border: 0.5px solid #17a2b8 !important;
+}
+
+button.btn-outline-danger{
+    border: 0.5px solid #b81717 !important;
+}
+
+button.btn-outline-danger:focus{
+    color: #fff;
+    background-color: #b81717;
+    box-shadow: none;
+}
+
+#rep_ok{
+    color: green;
+}
+
+#rep_error{
+    color: red;
+}
+
+.btn-outline-linux{
+    border-color: #7164a2;
+    color: #7164a2;
+}
+
+.btn-outline-linux:not(:disabled){
+    background-color: #7164a2;
+}
+
+.btn-outline-linux:not(:active),.btn-outline-linux:disabled,.btn-outline-linux.disabled {
+    background-color: #7164a2;
+    color: #fff;
+}
+
+
+.btn-outline-windows{
+    border-color: #3500f3;
+    color: #3500f3;
+}
+
+.btn-outline-windows:not(:disabled){
+    background-color: #3500f3;
+}
+
+.btn-outline-windows:not(:active),.btn-outline-windows:disabled,.btn-outline-windows.disabled {
+    background-color: #3500f3;
+    color: #fff;
+}
+

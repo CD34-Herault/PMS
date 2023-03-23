@@ -1,0 +1,10 @@
+@import "../../../../node_modules/angular-calendar/css/angular-calendar.css";
+
+.cal-events-num {
+    visibility: hidden;
+}
+
+.dark-theme {
+    background-color: #1f262d;
+    color: #d5d6d7;
+}

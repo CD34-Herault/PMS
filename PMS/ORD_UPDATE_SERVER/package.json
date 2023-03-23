@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "activedirectory2": "^2.1.0",
+    "body-parser": "^1.20.0",
+    "config": "^3.3.8",
+    "connect-mongo": "^4.6.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "cron": "^1.8.2",
+    "express": "^4.17.2",
+    "express-session": "^1.17.2",
+    "ftp-srv": "^4.6.2",
+    "mongodb": "^4.3.1",
+    "node-cron": "^3.0.0",
+    "node-expose-sspi": "^0.1.59",
+    "nodemailer": "^6.7.5",
+    "request": "^2.88.2",
+    "rxjs": "^7.6.0",
+    "save": "^2.9.0"
+  }
+}

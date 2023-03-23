@@ -1,0 +1,17 @@
+[{
+  "_id": {
+    "$oid": "61f3f65d08719250b5c4398d"
+  },
+  "icone": "bi-table",
+  "nom": "Bureautique",
+  "description": "Tâches de bureautique",
+  "authorized_groups": "GG Bureautique ToolBox"
+},{
+  "_id": {
+    "$oid": "61f3f72408719250b5c4398e"
+  },
+  "icone": "bi-laptop",
+  "nom": "Micro",
+  "description": "Tâches pour l'équipe Micro",
+  "authorized_groups": "GG A Micro ToolBox"
+}]

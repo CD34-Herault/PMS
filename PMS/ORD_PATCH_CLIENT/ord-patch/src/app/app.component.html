@@ -1,0 +1,7 @@
+<sb-layout-dashboard  *ngIf="this.authService.isConnected && this.authService.user.getValue()['groups'].includes('DEPT34\\GG A Lecture PatchManagement')">
+    <div [@slideInAnimation]="o.isActivated ? o.activatedRoute : ''">
+        <router-outlet #o="outlet"></router-outlet>
+    </div>
+</sb-layout-dashboard>
+
+<app-error403 *ngIf="this.authService.isConnected && !this.authService.user.getValue()['groups'].includes('DEPT34\\GG A Lecture PatchManagement')"></app-error403> 

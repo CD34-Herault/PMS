@@ -1,0 +1,12 @@
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" [routerLink]="['/patchManagement/dashboard']">Patch Serveurs</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" data-cy="topNavToggleSideNav" (click)="toggleSideNav()"><fa-icon [icon]='["fas", "bars"]'></fa-icon></button
+    ><!-- Navbar Search-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 mode" id="sidebarToggle" data-cy="topNavToggleSideNav" (click)="changeDept()" [ngClass]="mode_dept">DEPT34</button>
+    <button class="btn btn-link btn-sm order-1 order-lg-0 mode" id="sidebarToggle" data-cy="topNavToggleSideNav" (click)="changeCollege()" [ngClass]="mode_college">COLLEGE</button>
+
+    <a class="d-none d-md-inline-block form-inline ml-auto mr-5" target="_blank" href="https://herault.fr/"><img style="max-width: 110px; height: auto;" src="../../../assets/img/departement-herault-logo-vector.png"></a>
+    <!-- Navbar-->
+    <ul class="d-none d-md-inline-block navbar-nav ml-auto ml-md-0">
+        <sb-top-nav-user></sb-top-nav-user>
+    </ul>
+</nav>

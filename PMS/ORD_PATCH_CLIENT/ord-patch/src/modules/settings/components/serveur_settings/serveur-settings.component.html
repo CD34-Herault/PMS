@@ -1,0 +1,93 @@
+
+<div *ngIf="userProfilService.userProfil | async as profil ">
+    <h5 class="mb-0 mt-5 text-danger">Paramètres Serveurs</h5>
+    <p>Contrôle des paramètres de l'application et du serveur</p>
+
+    <hr class="my-4" />
+    <strong class="mb-0">Paramétrage serveur</strong>
+    <p>Contrôle des différentes valeur de configuration du serveur</p>
+    <div *ngIf="configServeurService.configServeur | async as config">
+        <form (ngSubmit)="submit()">
+            <div class="list-group mb-5 shadow">
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <strong class="mb-0">Choix de l'horaire de la récupération des informations sur les serveurs</strong>
+                        </div>
+                        <div class="col-auto">
+                            <div class="custom-control">
+                                <input type="time" id="appt" name="horaireMaj" class="form-control" [(ngModel)]="this.conf.horaireMaj" value="{{config.horaireMaj}}" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <strong class="mb-0">Choix durée de stockage des logs</strong>
+                            <p class="text-muted mb-0">Séléctionner la durée de stockage des logs en nombre de jours</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="custom-control">
+                                <input value="{{config.dureeLogs}}" name="dureeLogs" type="number" id="form6" class="form-control" [(ngModel)]="this.conf.dureeLogs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <strong class="mb-0">Mettre à jour la liste serveurs</strong>
+                            <p class="text-muted mb-0">Execute la mise à jours des informations sur les serveurs</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="custom-control">
+                                <button type="button" class="btn btn-success" (click)="updateServeurs()">Envoyer les épaulettes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4" />
+            <strong class="mb-0">Actions de gestion du serveurs</strong>
+            <p>Différentes actions sur le serveurs (attention certaines actions peuvent provoquer de graves effets)</p>
+            <div class="list-group mb-5 shadow">
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <strong class="mb-0">Supression des logs</strong>
+                            <p class="text-muted mb-0">Supprime les logs de plus de 6 mois</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="custom-control">
+                                <button type="button" class="btn btn-danger">Rincer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4" />
+            <strong class="mb-0" >Gestions utilisateurs de l'application</strong>
+            <p>Gestion des utilisateurs et de leurs droits sur l'application</p>
+            <div class="list-group mb-5 shadow" *ngIf="this.lesProfils | async as allProfils">
+                <div class="list-group-item" *ngFor="let unProfil of allProfils">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <strong class="mb-0">{{unProfil.login}}</strong>
+                            <p class="text-muted mb-0">{{unProfil.prenom}},{{unProfil.nom}}</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="custom-control">
+                                <p class="font-weight-bold" *ngIf="unProfil.type=='Lecture'">{{unProfil.type}}</p>
+                                <p class="font-weight-bold text-danger" *ngIf="unProfil.type=='Admin'">{{unProfil.type}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="button btn btn-success">Enregistrer les modifications</button>
+            <p *ngIf="this.responseConfig.getValue()=='modification faite'" class="text-success">{{this.responseConfig.getValue()}}</p>
+            <p *ngIf="this.responseConfig.getValue()!='modification faite'" class="text-danger">{{this.responseConfig.getValue()}}</p>
+        </form>
+    </div>
+</div>

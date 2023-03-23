@@ -1,0 +1,100 @@
+<!-- MODAL -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title">Supression Exclusion</h4>
+      <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Êtes-vous sûr de vouloir supprimer l'exclusion ?</strong></p>
+      <p>
+      <span class="text-danger">Une notification sera envoyé aux administrateurs systèmes.</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Ok click');this.supressionExclusion()">Supprimer</button>
+    </div>
+  </ng-template>
+  
+  <ng-template #content_addExcl let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title">Ajout d'une exclusion</h4>
+      <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Selection des serveurs: </strong></p>
+      <ngx-treeview [config]="config" [items]="items_fullServeur" (filterChange)="onFilterChange($event)"
+                        (selectedChange)="values = $event">
+      </ngx-treeview>
+      <div class="row align-items-center">
+        <div class="col">
+            <strong class="mb-0">Temporaire: </strong>
+        </div>
+        <div class="col-auto">
+            <div class="custom-control custom-switch">
+                <input *ngIf="(this.urlKey == '$KzGxqD&hAEtB32')" type="checkbox" class="custom-control-input" id="customSwitches" name="alertMail" disabled [(ngModel)]="this.temporaire" >
+                <input *ngIf="!(this.urlKey == '$KzGxqD&hAEtB32')" type="checkbox" class="custom-control-input" id="customSwitches" name="alertMail"  [(ngModel)]="this.temporaire" >
+                <label class="custom-control-label" for="customSwitches"></label>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+      <button type="button" class="btn btn-success" (click)="modal.close('Ok click');this.creationExclusion();">Créer</button>
+    </div>
+</ng-template>
+  
+<ng-template #note let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Note de l'exclusion</h4>
+    <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <label for="validationTextarea">Commentaire:</label>
+    <textarea class="form-control" id="validationTextarea" placeholder="Commentaire sur l'exclusion ..." [(ngModel)]="this.comment"></textarea>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click');this.CommenterExclusion()">Commenter</button>
+  </div>
+</ng-template>
+
+
+
+
+<form *ngIf="(auth.isAdmin | async) ||  (this.urlKey == '$KzGxqD&hAEtB32')">
+    <div>
+        <div class="ml-2 btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2 ml-2" role="group" aria-label="first group">
+                <button type="button" class="btn btn-outline-primary" (click)="open(content_addExcl);" >Ajouter une exception</button>
+            </div>
+            <div class="btn-group me-2 ml-2" role="group" aria-label="first group">
+              <span class="ml-3" >Maj des serveurs exclus: {{totalMajExclus}}</span>
+          </div>
+        </div>
+    </div> 
+</form>
+<table class="table table-striped" *ngIf="(serveurs | async) as liste" >
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Description</th>
+            <th scope="col">Maj restantes</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let serveur of liste">
+            <td><ngb-highlight Style="font-weight: bold" [result]="(liste.indexOf(serveur)+1).toString()"></ngb-highlight></td>
+            <td><ngb-highlight [result]="serveur.name"></ngb-highlight></td>
+            <td><ngb-highlight [result]="serveur.description"></ngb-highlight></td>
+            <td><ngb-highlight [result]="callback(serveur).toString()"></ngb-highlight></td>
+            <td><button class="delete" (click)="open(note);this.__id = serveur._id;this.comment = serveur.comment;" ><fa-icon [icon]='["fas", "note-sticky"]'></fa-icon></button></td>
+            <td *ngIf="(auth.isAdmin | async) || (this.urlKey == '$KzGxqD&hAEtB32')"><button class="delete" (click)="open(content);this.__id = serveur._id" ><fa-icon [icon]='["fas", "delete-left"]' [size]="'2x'"></fa-icon></button></td>
+        </tr>
+    </tbody>
+</table>
+

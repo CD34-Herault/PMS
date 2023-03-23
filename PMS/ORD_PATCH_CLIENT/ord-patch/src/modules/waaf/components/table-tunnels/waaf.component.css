@@ -1,0 +1,38 @@
+
+.btn-outline-alco{
+    border-color: #b30066;
+    color: #b30066;
+}
+
+.btn-outline-alco:disabled{
+   
+    background-color: #b30066;
+    color: rgb(255, 255, 255);
+}
+
+.btn-outline-alco:active {
+    background-color: #b34483;
+}
+
+
+.btn-outline-orange{
+    border-color: #ff7900;
+    color: #ff7900;
+
+    /* width: 300px !important; */
+}
+
+.btn-outline-orange:disabled{
+   
+    background-color: #ff7900;
+    color: rgb(255, 255, 255);
+}
+
+.btn-outline-orange:active {
+    background-color: #ffa251;
+}
+
+.inactif{
+    opacity: 0.3;
+    background: #ccc;
+  }
