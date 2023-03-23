@@ -23,7 +23,7 @@ $OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System
 $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer("MIC-WSUS2019.mic.local",$true,8531);
 
 
-$vmware = Connect-VIServer 172.19.34.19 -User "MIC\m.bonneaud" -Password "hY22j5fP" |out-null
+$vmware = Connect-VIServer 172.19.34.19 -User "MIC\m.bonneaud" -Password "******" |out-null
 
 
 
